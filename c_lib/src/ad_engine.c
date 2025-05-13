@@ -1,7 +1,7 @@
 #include "ad_engine.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
+#include <math.h>
 
 // --- Global Tape ---
 static t_node **TAPE = NULL;
@@ -151,6 +151,15 @@ static void _backward_div(t_node *self)
 	b->grad += self->grad / a->data;
 }
 
+static void _backward_pow(t_node *self)
+{
+	if (self->num_parents != 2) return;
+	t_node *a = self->parents[0];
+	t_node *b = self->parents[1];
+	a->grad = b->data * powf(a->data, (b->data - 1));
+	// exponent grad is not updated
+}
+
 // --- Forward Operations ---
 t_node *ad_add(t_node *a, t_node *b)
 {
@@ -174,6 +183,13 @@ t_node *ad_div(t_node *a, t_node *b)
 {
 	t_node *parents[] = {a, b};
 	return _create_node(a->data / b->data, parents, 2, _backward_div);
+}
+
+t_node *ad_pow(t_node *a, t_node *b)
+{
+	t_node *parents[] = {a, b};
+	float result = powf(a->data, b->data);
+	return _create_node(result, parents, 2, _backward_pow);
 }
 
 // --- Backward Pass ---
