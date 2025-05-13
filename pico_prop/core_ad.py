@@ -48,8 +48,8 @@ ad_lib.ad_mul.restype = CValuePtr
 # ad_lib.ad_exp.argtypes = [CValuePtr]
 # ad_lib.ad_exp.restype = CValuePtr
 
-# ad_lib.ad_pow_val_const.argtypes = [CValuePtr, ctypes.c_float]
-# ad_lib.ad_pow_val_const.restype = CValuePtr
+ad_lib.ad_pow.argtypes = [CValuePtr, CValuePtr]
+ad_lib.ad_pow.restype = CValuePtr
 
 # ad_lib.ad_relu.argtypes = [CValuePtr]
 # ad_lib.ad_relu.restype = CValuePtr
@@ -118,13 +118,13 @@ class Variable:
         c_res_ptr = ad_lib.ad_add(self._c_ptr, other._c_ptr)
         return Variable(0, _c_ptr=c_res_ptr, _children=(self,other), _op='+')
     
+    def __radd__(self, other):
+        return self.__add__(other)
+    
     def __mul__(self, other):
         other = other if isinstance(other, Variable) else Variable(other)
         c_res_ptr = ad_lib.ad_mul(self._c_ptr, other._c_ptr)
         return Variable(0, _c_ptr=c_res_ptr, _children=(self, other), _op='*')
-
-    def __radd__(self, other):
-        return self.__add__(other)
 
     def __rmul__(self, other):
         return self.__mul__(other)
