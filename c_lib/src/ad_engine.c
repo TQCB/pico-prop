@@ -156,8 +156,8 @@ static void _backward_pow(t_node *self)
 	if (self->num_parents != 2) return;
 	t_node *a = self->parents[0];
 	t_node *b = self->parents[1];
-	a->grad = b->data * powf(a->data, (b->data - 1));
-	// exponent grad is not updated
+	a->grad = self->grad * b->data * powf(a->data, (b->data - 1));
+	b->grad = self->grad * logf(a->data) * powf(a->data, b->data);
 }
 
 // --- Forward Operations ---
