@@ -1,4 +1,4 @@
-#include "../include/ad_engine.h"
+#include "ad_engine.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -126,6 +126,13 @@ static void _backward_add(t_node *self)
 	self->parents[1]->grad += self->grad;
 }
 
+static void _backward_sub(t_node *self)
+{
+	if (self->num_parents != 2) return;
+	self->parents[0]->grad -= self->grad;
+	self->parents[1]->grad -= self->grad;
+}
+
 static void _backward_mul(t_node *self)
 {
 	if (self->num_parents != 2) return;
@@ -135,6 +142,15 @@ static void _backward_mul(t_node *self)
 	b->grad += self->grad * a->data;
 }
 
+static void _backward_div(t_node *self)
+{
+	if (self->num_parents != 2) return;
+	t_node *a = self->parents[0];
+	t_node *b = self->parents[1];
+	a->grad += self->grad / b->data;
+	b->grad += self->grad / a->data;
+}
+
 // --- Forward Operations ---
 t_node *ad_add(t_node *a, t_node *b)
 {
@@ -142,10 +158,22 @@ t_node *ad_add(t_node *a, t_node *b)
 	return _create_node(a->data + b->data, parents, 2, _backward_add);
 }
 
+t_node *ad_sub(t_node *a, t_node *b)
+{
+	t_node *parents[] = {a, b};
+	return _create_node(a->data - b->data, parents, 2, _backward_sub);
+}
+
 t_node *ad_mul(t_node *a, t_node *b)
 {
 	t_node *parents[] = {a, b};
 	return _create_node(a->data * b->data, parents, 2, _backward_mul);
+}
+
+t_node *ad_div(t_node *a, t_node *b)
+{
+	t_node *parents[] = {a, b};
+	return _create_node(a->data / b->data, parents, 2, _backward_div);
 }
 
 // --- Backward Pass ---
