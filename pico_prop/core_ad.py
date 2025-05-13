@@ -129,6 +129,11 @@ class Variable:
     def __rmul__(self, other):
         return self.__mul__(other)
     
+    def __pow__(self, other):
+        other = other if isinstance(other, Variable) else Variable(other)
+        c_res_ptr = ad_lib.ad_pow(self._c_ptr, other._c_ptr)
+        return Variable(0, _c_ptr=c_res_ptr, _children=(self, other), _op='**')
+    
     def backward(self, seed_gradient=1.0):
         ad_lib.ad_backward(self._c_ptr, float(seed_gradient))
     
