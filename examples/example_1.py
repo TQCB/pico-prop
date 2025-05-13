@@ -1,39 +1,38 @@
 import sys
-sys.path.append(r"/mnt/c/Users/rapha/My Drive (raphael.pb.rialland@gmail.com)/Work/data_science/projects/deci_deriv_project")
-sys.path.append(r"/mnt/c/Users/rapha/My Drive (raphael.pb.rialland@gmail.com)/Work/data_science/projects/deci_deriv_project/deci_deriv")
+sys.path.append(r"/mnt/c/Users/rapha/My Drive (raphael.pb.rialland@gmail.com)/Work/data_science/projects/pico_prop_project")
+sys.path.append(r"/mnt/c/Users/rapha/My Drive (raphael.pb.rialland@gmail.com)/Work/data_science/projects/pico_prop_project/pico_prop")
 
-from deci_deriv import Variable, TapeContext
+from pico_prop import Variable, TapeContext
 
 if __name__ == "__main__":
-    tape = TapeContext()
-
-    with tape:
+    with TapeContext():
+        # Input variables
         a = Variable(2.0)
-        b = Variable(3.0)
-        c = a * b
-        d = Variable(4.0)
-        e = c + d
+        b = Variable(-3.0)
+        c = Variable(10.0)
+        x = Variable(-1.0)
+        y = Variable(3.0)
 
-        e.backward()
+        # Computation
+        d1 = a * x
+        d2 = b * y
+        d3 = d1 + d2
 
-        print("Example 1:")
-        print(f"{a=}\n{b=}\n{c=}\n{d=}\n{e=}")
-    
-    with tape:
-        in_1 = Variable(2.0)
-        in_2 = Variable(0.0)
-        w_1 = Variable(-3.0)
-        w_2 = Variable(1.0)
-        bias = Variable(6.8)
+        out = d3 + c
 
-        linear_1 = in_1 * w_1
-        linear_2 = in_2 * w_2
-        final_linear = linear_1 + linear_2
-        neuron = final_linear + bias
-        out = neuron * Variable(2.9)
-
+        # Perform the backward pass
         out.backward()
 
-        print("Example 2:")
-        print(f"{in_1=}\n{in_2=}\n{w_1=}\n{w_2=}\n{bias=}")
-        print(f"{final_linear=}\n{neuron=}\n{out=}")
+        # Print results (data and gradients)
+        print("--- Input Variables ---")
+        print(f"{a=}")
+        print(f"{b=}")
+        print(f"{c=}")
+        print(f"{x=}")
+        print(f"{y=}")
+        print("--- Intermediates ---")
+        print(f"{d1=}")
+        print(f"{d2=}")
+        print(f"{d3=}")
+        print("--- Final Output")
+        print(f"{out=}")
