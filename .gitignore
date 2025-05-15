@@ -1,3 +1,4 @@
 examples/
 build/
-picoprop/__pycache__/
+pico_prop/__pycache__/
+image/
