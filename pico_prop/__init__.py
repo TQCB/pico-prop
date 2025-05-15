@@ -1,1 +1,1 @@
-from core_ad import Variable, TapeContext
+from .core_ad import Variable, TapeContext
