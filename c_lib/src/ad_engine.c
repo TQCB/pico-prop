@@ -202,7 +202,7 @@ t_node *ad_pow(t_node *a, t_node *b)
 t_node *ad_sin(t_node *a)
 {
 	t_node *parents[] = {a};
-	return _create_node(sinf(a->data), parents, 1, _backward_sin)
+	return _create_node(sinf(a->data), parents, 1, _backward_sin);
 }
 
 // --- Backward Pass ---
