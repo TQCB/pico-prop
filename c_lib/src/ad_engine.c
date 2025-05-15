@@ -160,6 +160,13 @@ static void _backward_pow(t_node *self)
 	b->grad = self->grad * logf(a->data) * powf(a->data, b->data);
 }
 
+static void _backward_sin(t_node *self)
+{
+	if (self->num_parents != 1) return;
+	t_node *a = self->parents[0];
+	a->grad += self->grad * cosf(a->data);
+}
+
 // --- Forward Operations ---
 t_node *ad_add(t_node *a, t_node *b)
 {
@@ -190,6 +197,12 @@ t_node *ad_pow(t_node *a, t_node *b)
 	t_node *parents[] = {a, b};
 	float result = powf(a->data, b->data);
 	return _create_node(result, parents, 2, _backward_pow);
+}
+
+t_node *ad_sin(t_node *a)
+{
+	t_node *parents[] = {a};
+	return _create_node(sinf(a->data), parents, 1, _backward_sin)
 }
 
 // --- Backward Pass ---
